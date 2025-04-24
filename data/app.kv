@@ -1,0 +1,328 @@
+ScreenManager:
+    id: screen_manager
+    LoginScreen:
+    PasswordScreen:
+    CodeScreen:
+    ChangeScreen:
+    NavigationScreen:
+    DateScreen:
+<LoginScreen>
+    name: 'login'
+    canvas.before:
+        Color:
+            rgba: app.theme_cls.backgroundColor
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    MDTopAppBar:
+        type: "small"
+        pos_hint: {"top": 0.9}
+        MDTopAppBarTitle:
+            text: "Received"
+            pos_hint: {"center_x": .5}
+    MDTextField:
+        id:email
+        mode:"outlined"
+        size_hint_x: None
+        width: "350dp"
+        #hint_text: "email"
+        text_color_normal: app.theme_cls.primaryColor
+        pos_hint: {'center_x': 0.5, 'center_y': 0.62}
+        helper_text: app.login_email_error_message
+        helper_text_mode: "persistent"
+        helper_text_color_normal:"red"
+        on_text_validate: app.assist_check_login_email()
+        icon_left: "email"
+        MDTextFieldHintText:
+            text: 'email'
+            text_color_normal: app.theme_cls.primaryColor
+    MDTextField:
+        id:password
+        mode:"outlined"
+        size_hint_x: None
+        width: "350dp"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+        icon_left: "account"
+        MDTextFieldHintText:
+            text: 'password'
+            text_color_normal: app.theme_cls.primaryColor
+        MDTextFieldHelperText:
+            text: app.login_password_error_message
+            mode: "persistent"
+    MDCheckbox:
+        id:checkbox
+        active: True
+        size_hint: None, None
+        pos_hint: {'center_x': 0.4, 'center_y': 0.4}
+    MDLabel:
+        text: "Remember me"
+        halign:'center'
+        pos_hint: {'center_x': 0.5, 'center_y': 0.4}
+    MDButton:
+        id: login_button
+        #text: "Login"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+        on_release: app.assist_login()
+        MDButtonText:
+            text: 'Login'
+    MDButton:
+        id:password_retriever
+        style: "text"
+        #text:'Forgot your password?'
+        pos_hint: {"center_x": .5, "center_y": .2}
+        on_press:app.retrieve_password()
+        MDButtonText:
+            text: 'Forgot your password?'
+<PasswordScreen>
+    name:'password'
+    canvas.before:
+        Color:
+            rgba: app.theme_cls.backgroundColor
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    MDTextField:
+        id:email
+        mode:"outlined"
+        size_hint_x: None
+        width: "350dp"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+        icon_left: "email"
+        MDTextFieldHintText:
+            text: 'email'
+
+    MDButton:
+        id: retrieve_password_button
+        #text: "Send Code"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.45}
+        on_release: app.assist_send_code()
+        MDButtonText:
+            text: 'Send Code'
+<CodeScreen>
+    name:'code'
+    canvas.before:
+        Color:
+            rgba: app.theme_cls.backgroundColor
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    MDTextField:
+        id:code
+        mode:"outlined"
+        size_hint_x: None
+        width: "200dp"
+        max_text_length: 8
+        pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+        MDTextFieldHintText:
+            text: 'Enter the code'
+        MDTextFieldHelperText:
+            text: app.wrong_code
+            mode: "persistent"
+    MDButton:
+        id: check_code_button
+        pos_hint: {'center_x': 0.5, 'center_y': 0.45}
+        on_press: app.check_code()
+        MDButtonText:
+            text: "Check code"
+    MDButton:
+        id:code_resender
+        pos_hint: {"center_x": .5, "center_y": .35}
+        on_press:app.send_code()
+        style:'text'
+        MDButtonText:
+            text: 'Send code again'
+<ChangeScreen>
+    name:'changepassword'
+    canvas.before:
+        Color:
+            rgba: app.theme_cls.backgroundColor
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    MDTextField:
+        id:newpassword
+        mode:"outlined"
+        size_hint_x: None
+        width: "250dp"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+        MDTextFieldHintText:
+            text: 'Enter new password'
+    MDTextField:
+        id:confirmnewpassword
+        on_text:app.on_confirmnewpassword_change(self.text)
+        mode:"outlined"
+        size_hint_x: None
+        width: "250dp"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.45}
+        MDTextFieldHintText:
+            text: "Confirm new password"
+        MDTextFieldHelperText:
+            text: app.password_reset_error_message
+            mode: "persistent"
+    MDButton:
+        id: check_code_button
+        #text: "Reset password"
+        pos_hint: {'center_x': 0.5, 'center_y': 0.30}
+        on_press: app.reset_password()
+        MDButtonText:
+            text: 'Reset password'
+<BaseMDNavigationItem>
+
+    MDNavigationItemIcon:
+        icon: root.icon
+
+    MDNavigationItemLabel:
+        text: root.text
+<NavigationScreen>:
+    name: 'navigation'
+    canvas.before:
+        Color:
+            rgba: app.theme_cls.backgroundColor
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    MDBoxLayout:
+        orientation:'vertical'
+        md_bg_color: app.theme_cls.backgroundColor
+        MDScreenManager:
+            id: nav_screen_manager
+
+            EmailScreen:
+                name: 'Email'
+
+            UserScreen:
+                name: 'User'
+
+            SummaryScreen:
+                name: 'Log'
+        MDNavigationBar:
+            id: bottom_navigation
+            on_switch_tabs: app.switch_tab(*args)
+            BaseMDNavigationItem:
+                icon: 'gmail'
+                text: 'Email'
+
+            BaseMDNavigationItem:
+                id:admin_button
+                icon: 'account'
+                text: 'User'
+
+            BaseMDNavigationItem:
+                icon: 'file-document'
+                text: 'Log'
+
+<EmailScreen>:
+    name: 'Email'
+    canvas.before:
+        Color:
+            rgba: app.theme_cls.backgroundColor
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    #MDTopAppBar:
+        #title: "Automatic Email Sender"
+        #pos_hint: {'center_x': 0.5, 'center_y': 0.95}
+    MDTextField:
+        id: board_button
+        pos_hint: {'center_x': 0.5, 'center_y': 0.8}
+        width:"350dp"
+        size_hint_x:None
+        on_focus: if self.focus: app.open_menu(self)
+        MDTextFieldHintText:
+            text:"Select the Board"
+    MDButton:
+        id: send_email
+        pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+        on_release: app.send()
+        disabled: True
+        MDButtonText:
+            text:"Send"
+    MDLabel:
+        id: sending_label
+        text: ""
+        size_hint: None, None
+        pos_hint: {'center_x': 0.5, 'center_y': 0.015}
+        halign: "center"
+    MDIconButton:
+        id: logout
+        icon: "logout"
+        size_hint: None, None
+        pos_hint: {'center_x': 0.9, 'y': 0.91}
+        on_release: app.logout()
+
+<UserScreen>:
+    name: 'User'
+    canvas.before:
+        Color:
+            rgba: app.theme_cls.backgroundColor
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    MDLabel:
+        size_hint: None, None
+        text: "Add Users"
+        width:'100dp'
+        pos_hint: {'center_x': 0.5, 'center_y': 0.95}
+    MDButton:
+        id: add_user
+        pos_hint: {'center_x': 0.5, 'center_y': 0.08}
+        on_release: app.add_contact()
+        disabled: True
+        MDButtonText:
+            text: "Add User"
+<SummaryScreen>:
+    name: 'Log'
+    canvas.before:
+        Color:
+            rgba: app.theme_cls.backgroundColor
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    MDTopAppBar:
+        id:date_bar
+        type: "small"
+        pos_hint: {"top": 0.9}
+        MDTopAppBarLeadingButtonContainer:
+            MDActionTopAppBarButton:
+                id:back_arrow
+        MDTopAppBarTitle:
+            text: "Outbound log"
+            pos_hint:{'center_x':0.5}
+    AnchorLayout:
+        id:summary_box
+        padding: [500,200, 0, 200]
+        ScrollView:
+            id:my_scroll
+            do_scroll_x: False
+            do_scroll_y: True
+            MDList:
+                id: date_list
+<DateScreen>
+    name:'log'
+    canvas.before:
+        Color:
+            rgba: app.theme_cls.backgroundColor
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    MDTopAppBar:
+        type:'small'
+        pos_hint: {"top": 1}
+        MDTopAppBarLeadingButtonContainer:
+            MDActionTopAppBarButton:
+                id:back_arrow
+                icon:"arrow-left"
+                on_release:app.go_back_to_months()
+            MDTopAppBarTitle:
+                id:top_bar
+                text: "Date Screen"
+                pos_hint:{"center_x":0.5}
+    AnchorLayout:
+        id:table_anchor
+        padding: [0,200, 0, 200]
+        ScrollView:
+            id:my_scroll
+            do_scroll_x: False
+            do_scroll_y: True
+            MDList:
+                id: date_list
